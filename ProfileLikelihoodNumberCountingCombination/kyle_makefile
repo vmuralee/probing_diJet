@@ -1,0 +1,52 @@
+
+ROOT_CFLAGS=$(shell root-config --cflags)
+ROOT_LIBS=$(shell root-config --libs)  
+CXX=g++ -c
+LD=g++
+#LDFLAGS=-r# -arch x86_64 
+LDFLAGS=-D_REENTRANT -pthread -m64 -bind_at_load
+#LDFLAGS=-arch x86_64 -execute
+
+CINTFILE=cintfile.cpp
+CINTOBJ=cintfile.o
+INCLUDES=-I. -I$(ROOTSYS)/include
+HHLIST=RooPoisson.h
+PACKAGE=Combination
+
+More_LIBS=-lCore -lCint -lHist -lGraf -lGraf3d -lTree -lRint -lPostscript -lMatrix  -lPhysics -lm 
+
+all: ProfileCombination
+
+ProfileCombination: ProfileCombination.o  RooPoisson.o $(CINTOBJ) 
+	$(LD) $(LDFLAGS) -o ProfileCombination  ProfileCombination.o $(CINTOBJ)   RooPoisson.o $(ROOT_LIBS) -lRooFit  -lRooFitCore -lMinuit -lHtml 
+ # uncomment for macosx -bind_at_load 
+
+ProfileCombination.o: ProfileCombination.cpp
+	$(CXX) -c ProfileCombination.cpp $(ROOT_CFLAGS)
+
+
+
+RooPoisson.o: RooPoisson.cxx
+	#$(ROOTSYS)/bin/rootcint -f $(CINTFILE2) -c $(INCLUDES) $(HHLIST2) $(PACKAGE)_LinkDef.hh
+	$(CXX)  RooPoisson.cxx $(ROOT_CFLAGS)
+
+$(CINTOBJ): RooPoisson.h
+	$(ROOTSYS)/bin/rootcint -f $(CINTFILE) -c $(INCLUDES) $(HHLIST) $(PACKAGE)_LinkDef.hh
+	$(CXX) -fPIC -g -Wall -W  -Woverloaded-virtual -c $(CINTFILE) $(ROOT_CFLAGS) -o $(CINTOBJ) $(INCLUDES)
+	# example rlibmap -f -o lib/libMyLib.rootmap -l lib/libMyLib.so -d libHist -c include/MyLibLinkDef.h
+
+clean:
+	rm *.o cintfile.cpp cintfile.h
+
+
+integrated: ProfileCombination.o 
+	$(LD) $(LDFLAGS) -o ProfileCombination  ProfileCombination.o $(ROOT_LIBS) -lRooFit  -lRooFitCore -lMinuit -lHtml 
+ # uncomment for macosx -bind_at_load 
+
+
+ProfileCombinationWithPlots: ProfileCombinationWithPlots.o
+	$(LD) $(LDFLAGS) -o ProfileCombinationWithPlots ProfileCombinationWithPlots.o ../../roofit/RooFitCore/tmp/objects/RooAddition.o $(ROOT_LIBS) -lRooFit -lMinuit -lHtml -bind_at_load
+
+ProfileCombinationWithPlots.o: ProfileCombinationWithPlots.cpp
+	$(CXX) -c ProfileCombinationWithPlots.cpp $(ROOT_CFLAGS)
+

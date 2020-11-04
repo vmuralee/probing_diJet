@@ -1,0 +1,6 @@
+void separation_power(char cat1,char cat2){
+
+  map<char,char> sample_list;
+  sample_list.insert(pair<char,char>("qq",))
+  
+}

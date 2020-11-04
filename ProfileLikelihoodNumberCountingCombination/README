@@ -1,0 +1,85 @@
+ProfileCombination:
+Author: Kyle Cranmer <cranmer@cern.ch>
+Date: May 10, 2007
+
+Modifications:
+   March 31, 2008 Changed upper limit on b to scale with background 
+   uncertainty, relevant for channels large b and large uncertainty.
+
+Usage: ProfileCombination s1 s2 .. sN b1 b2 ... bN db1 db2 .. dbN
+       Where s_i = expected number of signal events
+             b_i = expected number of background events
+             db_i= relative background uncertainty (use 0.05 for a 5% uncertainty)
+
+Description: Calculates expected significance for N number counting channels 
+             with uncorrelated systematic errors.
+             Each channel is composed of a main  measurement (x) and a sideband measurement (y).
+             x is modeled as a Poisson with mean masterSignal*s_i + b_i
+             y is modeled as a Poisson with mean b_i*tau_i
+             tau_i is the factor corresponding to the relative background uncertainty db_i
+
+
+Installation:
+	make sure you have ROOT installed
+	If you can run ROOT, then your $ROOTSYS should be setup
+	just type 'gmake'
+	you should now have ProfileCombination ready to go
+
+
+Example:
+	
+
+
+./ProfileCombination 35 40 50 50 .1 .05
+
+RooFit v2.11 -- Developed by Wouter Verkerke and David Kirkby 
+                Copyright (C) 2000-2005 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+
+ print model
+RooProdPdf::joint(b_0,b_1,expected_s_0,expected_s_1,masterSignal,tau_0,tau_1,x_0,x_1,y_0,y_1) = 1.44377e-06
+Make hypothetical dataset:
+RooAbsReal::attachToTree(x_0) Fixing compression level of branch x_0
+RooAbsReal::attachToTree(y_0) Fixing compression level of branch y_0
+RooAbsReal::attachToTree(x_1) Fixing compression level of branch x_1
+RooAbsReal::attachToTree(y_1) Fixing compression level of branch y_1
+************************************************************
+*    Row   *       x_0 *       y_0 *       x_1 *       y_1 *
+************************************************************
+*        0 *        85 *       100 *        90 *       400 *
+************************************************************
+
+Fit to signal plus background:
+RooRealVar::0x4318a20::masterSignal:  1.0076 +/-  (-0.18606, 0.19362) L(0 - 3) 
+RooRealVar::0x4319230::b_0:  49.552 +/-  (-4.5047, 4.7575) L(0 - 116.569) 
+RooRealVar::0x432ece0::b_1:  49.865 +/-  (-2.4254, 2.5020) L(0 - 116.569) 
+
+  RooFitResult: minimized FCN value: 13.4424, estimated distance to minimum: 2.67783e-07
+                coviarance matrix quality: Full, accurate covariance matrix
+
+    Floating Parameter    FinalValue +/-  Error   
+  --------------------  --------------------------
+                   b_0    4.9552e+01 +/-  4.63e+00
+                   b_1    4.9865e+01 +/-  2.46e+00
+          masterSignal    1.0076e+00 +/-  1.89e-01
+
+
+Fit to background only:
+RooRealVar::0x4318a20::masterSignal:  0.0000 +/-  (-0.18606, 0.19362) C L(0 - 3) 
+RooRealVar::0x4319230::b_0:  61.335 +/- 4.4617 L(0 - 116.569) 
+RooRealVar::0x432ece0::b_1:  54.333 +/- 2.4556 L(0 - 116.569) 
+
+  RooFitResult: minimized FCN value: 31.218, estimated distance to minimum: 7.27885e-08
+                coviarance matrix quality: Approximation only, not accurate
+
+    Floating Parameter    FinalValue +/-  Error   
+  --------------------  --------------------------
+                   b_0    6.1335e+01 +/-  4.46e+00
+                   b_1    5.4333e+01 +/-  2.46e+00
+
+Profile log-likelihood ratio (-2 log lambda) = 35.5512
+corresponding to a probability of 1.2422e-09
+
+Confidence Level is = 
+5.962479

@@ -1,0 +1,25 @@
+import tensorflow as tf
+from tensorflow import keras
+
+model_new = keras.models.load_model('keras_model_JSS_gg.h5')
+
+#Creating Training,Test and Validation samples
+traindataset_full,testdataset = train_test_split(data_ar,test_size=0.1,random_state=42)
+traindataset,valdataset = train_test_split(traindataset_full,test_size=0.2,random_state=42)
+trainData = copy.deepcopy(traindataset)
+valData = copy.deepcopy(valdataset)
+
+
+X_train,X_val = trainData.drop('target',axis=1).to_numpy(dtype='float64'),valData.drop('target',axis=1).to_numpy(dtype='float64')
+y_train,y_val = trainData['target'].to_numpy(dtype='float64'),valData['target'].to_numpy(dtype='float64')
+X_test,y_test = testdataset.drop('target',axis=1).to_numpy(dtype='float64'),testdataset['target']
+
+#TransForming Data
+num_pipeline = Pipeline([
+    ('imputer',SimpleImputer(strategy="median")),
+    ('std_scaler',StandardScaler()),
+])
+encoder = OneHotEncoder()
+
+X_train_tr,X_val_tr,X_test_tr = num_pipeline.fit_transform(X_train),num_pipeline.fit_transform(X_val),num_pipeline.fit_transform(X_test)
+y_train_tr,y_val_tr = encoder.fit_transform(trainData[['target']]).toarray(),encoder.fit_transform(valData[['target']]).toarray()

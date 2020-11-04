@@ -1,0 +1,6 @@
+
+
+v1.1: March 21, 2008 -- modify upper limit on b for large uncertainty situations.  Post on PhyStat.org
+
+v1.0: May 10, 2007 -- Initial Release
+
