@@ -1,3 +1,0 @@
-import ROOT
-
-sample_list = {'qq':'NN_tuple_qq.root'}

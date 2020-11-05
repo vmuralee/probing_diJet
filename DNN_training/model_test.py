@@ -19,16 +19,16 @@ filenames = cat_files['gg']
 labels = ['ptJ1','ptJ2','invmass','DRJ1J2','etaJ1','etaJ2']
 
 print('Using JSS paramets')
-#labels = labels+['pTDJ1','pTDJ2','LHAJ1','LHAJ2','e05J1','e05J2','s2J1','s2J2','pmJ1','pmJ2','tmJ1','tmJ2','widthJ1','widthJ2','girthJ1','girthJ2']
+labels = labels+['pTDJ1','pTDJ2','LHAJ1','LHAJ2','e05J1','e05J2','s2J1','s2J2','pmJ1','pmJ2','tmJ1','tmJ2','widthJ1','widthJ2','girthJ1','girthJ2']
 
-data = Data2Array('../data/Ntuples',filenames,labels)
+data = Data2Array('../data/Ntuples',filenames,labels,(1580,2100))
 data_ar = data.load_df()
 
 
-model_new = keras.models.load_model('keras_model_gg.h5')
+model_new = keras.models.load_model('keras_model_JSS_gg_wcut.h5')
 
 #Creating Training,Test and Validation samples
-traindataset_full,testdataset = train_test_split(data_ar,test_size=0.1,random_state=42)
+traindataset_full,testdataset = train_test_split(data_ar,test_size=0.5,random_state=42)
 traindataset,valdataset = train_test_split(traindataset_full,test_size=0.2,random_state=42)
 trainData = copy.deepcopy(traindataset)
 valData = copy.deepcopy(valdataset)
@@ -51,6 +51,6 @@ y_train_tr,y_val_tr = encoder.fit_transform(trainData[['target']]).toarray(),enc
 
 y_pred = model_new.predict(X_test_tr)
 
-tfile = Array2Data(y_pred,testdataset,"test_gg.root")
+tfile = Array2Data(y_pred,testdataset,"test_gg_JSS_wcut.root")
 tfile.SigTree("gg")
 tfile.BkgTree()

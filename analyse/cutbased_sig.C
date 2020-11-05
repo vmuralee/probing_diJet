@@ -39,9 +39,9 @@ void SsqrtB(TString cat,TString filename,float xsecS,float xsecB,int Nbins){
   //cout<<"minimum value: "<<hB->GetEntries()<<" "<<Bmin<<endl;
  
 }
-void cutbased_sig(int N =10){
-  SsqrtB("gg","test_gg.root",80.39,28331,N);
-  //SsqrtB("ggJSS","test_ggJSS.root",80.39,28331,N);
+void cutbased_sig(int N =50){
+  //SsqrtB("gg","test_gg_wcut.root",80.39,28331,N);
+  SsqrtB("gg","test_gg_JSS_wcut.root",80.39,28331,N);
   // SsqrtB("qg","NN_tuple_qg.root");
   /* SsqrtB("qgJSS","NN_tuple_qg_JSS.root"); */
   /* SsqrtB("qq","NN_tuple_qq.root"); */

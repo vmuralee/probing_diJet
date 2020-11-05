@@ -30,6 +30,7 @@ parser.add_argument('--path',type=str,help='pathe of samples',default='../data/N
 parser.add_argument('--JSS',type=bool,help='add JSS parameter',default=False)
 parser.add_argument('--csv',type=bool,help='save csv file',default=False)
 parser.add_argument('--outfile',type=str,help='output root file',default='test.root')
+parser.add_argument('--cut',type=int,help='Invariant mass cut',default=(0,10000),nargs=2)
 args = parser.parse_args()
 if(args.cat not in ['qq','qg','gg']):
     print('Please choose either of qq,qg or gg')
@@ -46,7 +47,12 @@ if(args.JSS):
     print('Using JSS paramets')
     labels = labels+['pTDJ1','pTDJ2','LHAJ1','LHAJ2','e05J1','e05J2','s2J1','s2J2','pmJ1','pmJ2','tmJ1','tmJ2','widthJ1','widthJ2','girthJ1','girthJ2']
 
-data = Data2Array(args.path,filenames,labels)
+m_cut = args.cut
+if(m_cut[0]==0 and m_cut == 10000):
+    print('No invariant mass cut')
+else:
+    print('Invariant mass cut of ',m_cut[0],' < m_inv < ',m_cut[1],' applied')
+data = Data2Array(args.path,filenames,labels,m_cut)
 data_ar = data.load_df()
 
 # Export to csv file
@@ -100,9 +106,9 @@ model = build_model(n_hidden=3,n_neurons=475,learning_rate=l_rate,input_shapes=l
 #checkpoint_cb = keras.callbacks.ModelCheckpoint("keras_model.h5")
 prefit = model.fit(X_train_tr,y_train,epochs=args.epoch,validation_data=(X_val_tr,y_val),callbacks=[keras.callbacks.EarlyStopping(patience=10)])
 if(args.JSS):
-    model.save("keras_model_JSS_"+args.cat+".h5")
+    model.save("keras_model_JSS_"+args.cat+"_wcut.h5")
 else:
-    model.save("keras_model_"+args.cat+".h5")
+    model.save("keras_model_"+args.cat+"_wcut.h5")
 
 #Learning Curves
 pd.DataFrame(prefit.history).plot(figsize=(8,5))
