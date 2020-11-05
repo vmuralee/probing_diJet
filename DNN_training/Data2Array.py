@@ -11,10 +11,12 @@ from sklearn.preprocessing import StandardScaler
 import numpy as np
 
 class Data2Array:
-    def __init__(self,path,filenames,var):
+    def __init__(self,path,filenames,var,cuts):
         self.path = path
         self.filenames = filenames
         self.var = var
+        self.m_low = cuts[0]
+        self.m_high = cuts[1]
         for filename in self.filenames:
             print(f"loading data from {self.path}/{filename}")
     def variable_list(self):
@@ -30,8 +32,8 @@ class Data2Array:
         tree = file_.Get(treename)
         tree_arr = tree2array(tree)
         tree_df = pd.DataFrame(tree_arr,columns=cols_list)
-        #tree_df = tree_df.loc[tree_df['invmass']>1900]
-        # tree_df = tree_df.loc[tree_df['invmass']<2200]
+        tree_df = tree_df.loc[tree_df['invmass']>self.m_low]
+        tree_df = tree_df.loc[tree_df['invmass']<self.m_high]
         # tree_df = tree_df.loc[tree_df['ptJ1']>800]
         # tree_df = tree_df.loc[tree_df['ptJ2']>800]
         if("gg" in filename):tree_df['target']='0'
