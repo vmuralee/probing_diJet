@@ -1,20 +1,20 @@
 
 #include <fstream>
 
-void SsqrtB(TString cat,TString filename,float xsecS,float xsecB,int Nbins){
+void SsqrtB(TString cat,TString filename,float xsecS,float NS,float xsecB,float NB,int Nbins){
   TFile* file = TFile::Open("../output/"+filename);
   TH1F* hS = new TH1F("hS","",Nbins,0.,1.0);hS->Sumw2();
   TH1F* hB = new TH1F("hB","",Nbins,0.,1.0);hB->Sumw2();
   float lumi = 100.0;//units of fb-1
   
-  TString sigtree = "TreeS_"+cat;
+  TString sigtree = "TreeS";
   TTree* tS = (TTree*)file->Get(sigtree);
   TTree* tB = (TTree*)file->Get("TreeB_SMbkg");
   tS->Draw("sig_score>>hS");
   tB->Draw("bkg_score>>hB");
   //hS->Scale(1/hS->Integral());  hB->Scale(1/hB->Integral());
-  float normS = 100*xsecS/529190.0;
-  float normB = 100*xsecB/648245.0;
+  float normS = lumi*xsecS/NS;
+  float normB = lumi*xsecB/NB;
   hS->Scale(normS);  hB->Scale(normB);
   cout<<normS<<"  "<<normB<<endl;
 
@@ -40,8 +40,12 @@ void SsqrtB(TString cat,TString filename,float xsecS,float xsecB,int Nbins){
  
 }
 void cutbased_sig(int N =50){
-  //SsqrtB("gg","test_gg_wcut.root",80.39,28331,N);
-  SsqrtB("gg","test_gg_JSS_wcut.root",80.39,28331,N);
+  //SsqrtB("gg","NN_tuple_gg_Nocut.root",80.39,28331,N);
+  //SsqrtB("gg","NN_tuple_ggJSS_Nocut.root",80.39,28331,N);
+
+  SsqrtB("gg","NN_tuple_pt5_gg_Nocut.root",80.39,264268,28331,324450,N);
+  //SsqrtB("gg","NN_tuple_pt5_ggJSS_Nocut.root",80.39,28331,N);
+  
   // SsqrtB("qg","NN_tuple_qg.root");
   /* SsqrtB("qgJSS","NN_tuple_qg_JSS.root"); */
   /* SsqrtB("qq","NN_tuple_qq.root"); */
@@ -52,7 +56,7 @@ TGraph* SoverB_histo(TString cat="gg",TString filename="NN_tuple_gg.root",int Nb
   TH1F* hS = new TH1F("hS","",Nbins,0.,1.0);hS->Sumw2();
   TH1F* hB = new TH1F("hB","",Nbins,0.,1.0);hB->Sumw2();
 
-  TString sigtree = "TreeS_"+cat;
+  TString sigtree = "TreeS";
   TTree* tS = (TTree*)file->Get(sigtree);
   TTree* tB = (TTree*)file->Get("TreeB_SMbkg");
   tS->Draw("sig_score>>hS");

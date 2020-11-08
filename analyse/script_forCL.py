@@ -9,7 +9,7 @@ with open('events.txt') as f:
 
 #print(Sevent_list)
 nbins = len(Bevent_list)
-bsyst = np.linspace(0.005,0.05,50)
+bsyst = np.linspace(0.005,0.05,20)
 
 def createline(list_):
     line = ''
