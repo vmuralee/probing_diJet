@@ -1,6 +1,0 @@
-void add_hist(TString filename,TString treename,TString branch){
-  TH1F* h = new TH1F("h","",10,0.05,0.95);
-  TTree* t = (TTree*)file->Get()
-
-
-}

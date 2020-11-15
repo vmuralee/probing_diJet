@@ -1,0 +1,58 @@
+import ROOT
+import sys
+import numpy as np
+
+def createhisto_list(cat,xsecS,xsecB,Nbins):
+    dir_ = '../output/saved_models/model__'+cat+'_Nocut/'
+    filename = dir_+'NN_tuple_'+cat+'_Nocut.root'
+    file_ = ROOT.TFile(filename)
+    tS = file_.Get('TreeS')
+    tB = file_.Get('TreeB_SMbkg')
+    hS = ROOT.TH1F('hS','',Nbins,0.0,1.0)
+    hB = ROOT.TH1F('hB','',Nbins,0.0,1.0)
+    tS.Draw('sig_score>>hS')
+    tB.Draw('bkg_score>>hB')
+    normS = xsecS*100/529190.0#tS.GetEntries()
+    normB = xsecB*100/648245.0#tB.GetEntries()
+    hS.Scale(normS)
+    hB.Scale(normB)
+    arS,arB = [],[]
+    for ib in range(1,hB.GetNbinsX()+1):
+        arS.append(int(hS.GetBinContent(ib)))
+        arB.append(int(hB.GetBinContent(ib)))
+    
+    return np.array(arS,dtype=str),np.array(arB,dtype=str)
+
+
+def createline(list_):
+    line = ''
+    for l in list_:
+        l_ = l + ' '
+        line += l_
+    return line
+
+#main program
+ofile = open(sys.argv[1],'w')
+nbins = int(sys.argv[3])
+cat = sys.argv[2]
+
+#bsyst = np.array([i*10/1000 for i in range(1,11)])
+bsyst = np.linspace(0.005,0.1,20)
+Sevent_list,Bevent_list = createhisto_list(cat,80.39,28331,nbins)
+s_list = createline(Sevent_list)
+b_list = createline(Bevent_list)
+for ite in range(bsyst.size):
+   syst_list =  [str(bsyst[ite]) for i in range(nbins)]
+   syst_line = createline(syst_list)
+   each_line = './ProfileCombination '
+   each_line += s_list
+   each_line += b_list
+   each_line += syst_line
+   ofile.write(each_line+'\n')
+   #print(each_line)
+
+ofile.close()
+#print(len(s_list),' ',len(b_list),' ',len(syst_list))
+#print(s_list)
+
+

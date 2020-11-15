@@ -40,7 +40,7 @@ cat_files = dict({'qq':['pp2jj_SMbkg-Nev2e6-ptJetMin700-antiktR0.4-zcut0.1-beta1
 })
 filenames = cat_files[args.cat]
 
-prefix = '_pt1_'+args.cat
+prefix = '_'+args.cat
 
 labels = ['ptJ1','ptJ2','invmass','DRJ1J2','etaJ1','etaJ2']
 if(args.JSS):
@@ -67,7 +67,7 @@ if(args.csv):
 
     
 #Creating Training,Test and Validation samples
-traindataset_full,testdataset = train_test_split(data_ar,test_size=0.1,random_state=42)
+traindataset_full,testdataset = train_test_split(data_ar,test_size=0.3,random_state=42)
 traindataset,valdataset = train_test_split(traindataset_full,test_size=0.2,random_state=42)
 trainData = copy.deepcopy(traindataset)
 valData = copy.deepcopy(valdataset)
@@ -101,16 +101,19 @@ def build_model(n_hidden=1,n_neurons=30,learning_rate=3e-3,input_shapes=[8]):
     model.compile(loss="sparse_categorical_crossentropy",optimizer=optimizer,metrics=['accuracy'])
     return model
 
-l_rate =  0.01304080507013371
-
+l_rate =  0.02023431713920855
+if(args.JSS):
+    l_rate = 0.01304080507013371
 #Tuned Model
-model = build_model(n_hidden=3,n_neurons=475,learning_rate=l_rate,input_shapes=len(labels))
+model = build_model(n_hidden=2,n_neurons=347,learning_rate=l_rate,input_shapes=len(labels))
+if(args.JSS):
+    model = build_model(n_hidden=3,n_neurons=475,learning_rate=l_rate,input_shapes=len(labels))
 
 print('training model for '+prefix+' ..............................')
 #checkpoint_cb = keras.callbacks.ModelCheckpoint("keras_model.h5")
 prefit = model.fit(X_train_tr,y_train,epochs=args.epoch,validation_data=(X_val_tr,y_val),callbacks=[keras.callbacks.EarlyStopping(patience=10)])
 
-model_dir = "../output/models/model_"+prefix
+model_dir = "../output/saved_models/model_"+prefix
 try:
     os.mkdir(model_dir)
 except:  

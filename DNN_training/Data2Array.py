@@ -32,14 +32,14 @@ class Data2Array:
         tree = file_.Get(treename)
         tree_arr = tree2array(tree)
         tree_df = pd.DataFrame(tree_arr,columns=cols_list)
-        tree_df = tree_df.loc[tree_df['invmass']>self.m_low]
-        tree_df = tree_df.loc[tree_df['invmass']<self.m_high]
+        # tree_df = tree_df.loc[tree_df['invmass']>self.m_low]
+        # tree_df = tree_df.loc[tree_df['invmass']<self.m_high]
         # tree_df = tree_df.loc[tree_df['ptJ1']>800]
         # tree_df = tree_df.loc[tree_df['ptJ2']>800]
-        if("gg" in filename):tree_df['target']='0'
-        if("ug" in filename):tree_df['target']='0'
-        if("qq" in filename):tree_df['target']='0'
-        if("SMbkg" in filename):tree_df['target']='1'
+        if("gg" in filename):tree_df['target']='1'
+        if("ug" in filename):tree_df['target']='1'
+        if("qq" in filename):tree_df['target']='1'
+        if("SMbkg" in filename):tree_df['target']='0'
         return tree_df
     def load_df(self):
         cols_list = self.var+['target']
@@ -65,12 +65,12 @@ class Array2Data:
         self.tree_df = tree_df
         self.filename = filename
         self.tree_df['nn_score']=score[:,1]
-        self.Bkg_df = tree_df.loc[tree_df['target']=='1']
-        self.Sig_df = tree_df.loc[tree_df['target']=='0']
+        self.Bkg_df = tree_df.loc[tree_df['target']=='0']
+        self.Sig_df = tree_df.loc[tree_df['target']=='1']
         print("Creating outfile .......")
     
-    def SigTree(self,tree_prefix):
-        treename = 'TreeS_'+tree_prefix
+    def SigTree(self):
+        treename = 'TreeS'
         m_inv = np.array(self.Sig_df['invmass'],dtype='float32')
         score_list = np.array(self.Sig_df['nn_score'],dtype='float32')
         zip_l = zip(m_inv,score_list)

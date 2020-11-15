@@ -1,6 +1,8 @@
 void scores_roc(TString filename1,TString filename2,TString cat,TCut cut){
-  TFile* filewithoutJSS = new TFile("../output/"+filename1);
-  TFile* filewithJSS = new TFile("../output/"+filename2);
+  TString path_file = "../output/saved_models/model__"+cat+"_Nocut";
+  TString path_JSS = "../output/saved_models/model__"+cat+"JSS_Nocut";
+  TFile* filewithoutJSS = new TFile(path_file+"/"+filename1);
+  TFile* filewithJSS = new TFile(path_JSS+"/"+filename2);
 
   TTree* t_sig = (TTree*)filewithoutJSS->Get("TreeS");
   TTree* t_sigJSS = (TTree*)filewithJSS->Get("TreeS");
@@ -8,8 +10,8 @@ void scores_roc(TString filename1,TString filename2,TString cat,TCut cut){
   TTree* t_bkg = (TTree*)filewithoutJSS->Get("TreeB_SMbkg");
   TTree* t_bkgJSS = (TTree*)filewithJSS->Get("TreeB_SMbkg");
 
-  TGraph* gr = (TGraph*)filewithoutJSS->Get("roc_graph");
-  TGraph* gr_JSS = (TGraph*)filewithJSS->Get("roc_graph");
+  TGraph* gr = (TGraph*)filewithoutJSS->Get("test_roc");
+  TGraph* gr_JSS = (TGraph*)filewithJSS->Get("test_roc");
 
   TCanvas* c1 = new TCanvas("c1","",500,500);
   c1->SetLogy();
@@ -73,7 +75,7 @@ void scores_roc(TString filename1,TString filename2,TString cat,TCut cut){
   legend->AddEntry(hBJSS_score,"SMbkg JSS","f");
   legend->Draw();
   
-  c1->SaveAs("../output/NN_score_pt1_"+cat+".png");
+  c1->SaveAs("../output/NN_score_"+cat+"_Nocut.png");
   //c1->delete;
 
   TCanvas* c2 = new TCanvas("c2","",500,500);
@@ -93,12 +95,13 @@ void scores_roc(TString filename1,TString filename2,TString cat,TCut cut){
   legend1->AddEntry(gr_JSS,cat+" JSS","l");
   legend1->Draw();
   
-  c2->SaveAs("../output/roc_curve_pt1_"+cat+".png");
+  c2->SaveAs("../output/roc_curve_"+cat+"_Nocut.png");
     
 }
 void plot(){
-  // scores_roc("NN_tuple_qg.root","NN_tuple_qg_JSS.root","qg","m_inv>1600&&m_inv<2120");
-  // scores_roc("NN_tuple_qq.root","NN_tuple_qq_JSS.root","qq","m_inv>1680&&m_inv<2180");
-  //scores_roc("NN_tuple_pt5_gg_Nocut.root","NN_tuple_pt5_ggJSS_Nocut.root","gg","");
-  scores_roc("NN_tuple_gg_Nocut.root","NN_tuple_ggJSS_Nocut.root","gg","");
+  
+  //scores_roc("NN_tuple_ggminv_1580_2100.root","NN_tuple_ggJSSminv_1580_2100.root","gg","");
+  scores_roc("NN_tuple_qg_Nocut.root","NN_tuple_qgJSS_Nocut.root","qg","");
+  //scores_roc("NN_tuple_qq_Nocut.root","NN_tuple_qqJSS_Nocut.root","qq","");
+  //scores_roc("NN_tuple_gg_Nocut.root","NN_tuple_ggJSS_Nocut.root","gg","");
 }
